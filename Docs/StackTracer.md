@@ -32,7 +32,7 @@ StackTracer is a C++ library for capturing stack traces across multi-threaded ap
 ## Implementation Details
 
 ### Signal Propagation Flow
-1. Signal received by any thread
+1. Signal recieved by a thread (The thread that caused the crash or randomly if it is a non-crashing signal)
 2. First-signal detection via atomic operation
 3. Thread ID collection from /proc
 4. Signal propagation to all threads

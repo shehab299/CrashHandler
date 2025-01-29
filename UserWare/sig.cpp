@@ -5,14 +5,22 @@
 #include <signal.h>
 
 
+// Function to deliberately cause a segmentation fault
+void trigger_segfault() {
+    int* invalid_ptr = nullptr; // Null pointer
+    *invalid_ptr = 42; // Writing to null pointer causes SIGSEGV
+}
+
 // Simulate some work in each thread
 void do_some_work(int thread_id) {
+    sleep(3);
 
-    while(true) {
-        sleep(3);
-        do_some_work(thread_id);
+    if (thread_id == 2) { // Let thread 2 trigger the segmentation fault
+        std::cout << "Thread " << thread_id << " is about to cause a segmentation fault!\n";
+        trigger_segfault();
     }
 
+    do_some_work(thread_id);
 }
 
 void* thread_func(void* arg) {
@@ -21,7 +29,6 @@ void* thread_func(void* arg) {
     sleep(1000); // Simulate work by sleeping indefinitely
     return nullptr;
 }
-
 
 void start_threads(int num_threads) {
     pthread_t tid;
@@ -35,8 +42,8 @@ void start_threads(int num_threads) {
 }
 
 int main() {
-
     std::cout << "MY PID: " << getpid() << std::endl;
+
     // Create a StackTracer instance and setup signals
     StackTracer* stack_tracer = StackTracer::getInstance();
     stack_tracer->setupStackTracer();
@@ -45,7 +52,6 @@ int main() {
 
     // Start the threads
     start_threads(num_threads);
-
 
     while (true) {
         pause(); // Wait for signals
