@@ -1,5 +1,5 @@
-project(StackTracer)
 cmake_minimum_required(VERSION 3.10)
+project(StackTracer)
 
 
 set(CMAKE_CXX_STANDARD 11)
@@ -14,7 +14,6 @@ set(BOOST_LIBRARYDIR "${BOOST_ROOT}/lib")
 set(LIBBACKTRACE_INCLUDEDIR "${BACKTRACE_ROOT}/include")
 set(LIBBACKTRACE_LIBRARYDIR "${BACKTRACE_ROOT}/lib")
 
-message(${BACKTRACE_ROOT})
 
 # Find dependencies
 find_package(Threads REQUIRED)
@@ -30,7 +29,6 @@ file(GLOB_RECURSE SOURCES ${CMAKE_SOURCE_DIR}/../source/*.cpp)
 set(LIBBACKTRACE_ARCHIVES "${BACKTRACE_ROOT}/lib/libbacktrace.a")
 
 foreach(LIBBACKTRACE_ARCHIVE ${LIBBACKTRACE_ARCHIVES})
-    message(${LIBBACKTRACE_ARCHIVE})
     if(EXISTS ${LIBBACKTRACE_ARCHIVE})
         execute_process(
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/libbacktrace_extracted
@@ -43,8 +41,6 @@ foreach(LIBBACKTRACE_ARCHIVE ${LIBBACKTRACE_ARCHIVES})
 endforeach()
 
 file(GLOB_RECURSE BACKTRACE_OBJECTS ${CMAKE_BINARY_DIR}/libbacktrace_extracted/*.o)
-
-message("${BACKTRACE_OBJECTS}")
 
 # Create library
 add_library(StackTracer STATIC ${SOURCES} ${BACKTRACE_OBJECTS})

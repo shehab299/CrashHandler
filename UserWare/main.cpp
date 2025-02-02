@@ -39,7 +39,7 @@ int main() {
     std::cout << "MY PID: " << getpid() << std::endl;
     // Create a StackTracer instance and setup signals
     StackTracer* stack_tracer = StackTracer::getInstance();
-    stack_tracer->setupStackTracer();
+    stack_tracer->setupStackTracer(StackTracer::Output::FILE, "./a.log");
 
     const int num_threads = 5; // Number of threads to spawn
 

@@ -55,7 +55,7 @@ StackTracer is a C++ library for capturing stack traces across multi-threaded ap
 ## Basic Usage
 
 ```cpp
-#include "StackTracer.h"
+#include <StackTracer.h>
 
 int main() {
     auto tracer = StackTracer::getInstance();
@@ -75,14 +75,6 @@ tracer->signals = {
     SIGFPE,   // Floating point exception
     SIGILL    // Illegal instruction
 };
-```
-
-### Integration with Existing Signal Handlers
-```cpp
-struct sigaction existing_handler;
-sigaction(SIGSEGV, nullptr, &existing_handler);
-tracer->signals = {SIGSEGV};
-tracer->setupStackTracer();
 ```
 
 ## Output Example
@@ -113,3 +105,18 @@ Backtrace for thread 140735272933120:
 - Check setup return status
 - Monitor log output
 - Handle /proc access failures
+Sure! Here's a simplified version:
+
+---
+
+## Build Instructions
+
+To build the library, navigate to the project directory, create a `build` folder, and generate the build files with CMake. Then, use `make` to compile the project. The resulting library will be placed in the `lib` folder.
+
+```bash
+cd prj_x
+mkdir build
+cmake -S . -B build
+make -C build
+```
+
