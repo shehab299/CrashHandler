@@ -1,9 +1,10 @@
 #include "../include/StackTracer.h"
-#include <pthread.h>
 #include <iostream>
+#include <thread>
+#include <chrono>
+#include <vector>
 #include <unistd.h>
 #include <signal.h>
-
 
 // Function to deliberately cause a segmentation fault
 void trigger_segfault() {
@@ -13,31 +14,18 @@ void trigger_segfault() {
 
 // Simulate some work in each thread
 void do_some_work(int thread_id) {
-    sleep(3);
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+    std::cout << "Thread " << thread_id << " is working...\n";
 
     if (thread_id == 2) { // Let thread 2 trigger the segmentation fault
         std::cout << "Thread " << thread_id << " is about to cause a segmentation fault!\n";
+        sleep(10);
         trigger_segfault();
     }
 
-    do_some_work(thread_id);
-}
-
-void* thread_func(void* arg) {
-    int thread_id = *static_cast<int*>(arg);
-    do_some_work(thread_id);
-    sleep(1000); // Simulate work by sleeping indefinitely
-    return nullptr;
-}
-
-void start_threads(int num_threads) {
-    pthread_t tid;
-    int thread_id = 0;
-
-    // Create threads
-    for (int i = 0; i < num_threads; ++i) {
-        pthread_create(&tid, nullptr, thread_func, &thread_id);
-        thread_id++; // Increment thread_id for each new thread
+    // Simulate some work (no recursion)
+    while (true) {
+        std::this_thread::sleep_for(std::chrono::seconds(1));  // Simulate work
     }
 }
 
@@ -46,15 +34,19 @@ int main() {
 
     // Create a StackTracer instance and setup signals
     StackTracer* stack_tracer = StackTracer::getInstance();
-    stack_tracer->setupStackTracer();
+    stack_tracer->setupStackTracer(); // Ensure correct arguments
 
     const int num_threads = 5; // Number of threads to spawn
+    std::vector<std::thread> threads;
 
-    // Start the threads
-    start_threads(num_threads);
+    // Start threads
+    for (int i = 0; i < num_threads; ++i) {
+        threads.emplace_back(do_some_work, i);
+    }
 
-    while (true) {
-        pause(); // Wait for signals
+    // Wait for all threads to finish (in this case, they are stuck in an infinite loop, so the program never exits)
+    for (auto& t : threads) {
+        t.join();
     }
 
     return 0;

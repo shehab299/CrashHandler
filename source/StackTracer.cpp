@@ -1,8 +1,6 @@
 #include <StackTracer.h>
 #include <utils.h>
-
 #include <boost/stacktrace.hpp>
-
 #include <iostream>
 #include <unistd.h>
 #include <csignal>
@@ -70,7 +68,6 @@ void StackTracer::signalHandler(int sig) {
     }
 
     cv.notify_all();
-
     while(true);
 }
 
@@ -98,7 +95,9 @@ void StackTracer::printBacktrace() {
 
     std::string output = oss.str();
     write(inst->output_descriptor, output.c_str(), output.size());
-    close(inst->output_descriptor);
+
+    if(inst->output_descriptor != STDOUT_FILENO && inst->output_descriptor != STDERR_FILENO)
+        close(inst->output_descriptor);
 }
 
 void StackTracer::sendSignalToAllThreads(int sig) {

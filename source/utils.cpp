@@ -37,6 +37,7 @@ int getThreadsCount(pid_t pid)
 }
 
 std::vector<pid_t> getAllThreadIds(pid_t pid) {
+
     std::vector<pid_t> thread_ids;
     std::string task_dir = "/proc/" + std::to_string(pid) + "/task/";
     DIR* dir = opendir(task_dir.c_str());
